@@ -36,7 +36,7 @@ public class ImagesService {
     @Value("${CLOUD_AWS_S3_DOMAIN}")
     private String CLOUD_FRONT_DOMAIN_NAME;
 
-    @Value("${CLOUD_AWS_S3_BUCKET}")
+    @Value("${cloud.aws.s3.bucketName}")
     private String bucket;
 
     // 파일 저장하고 뽑아오기
@@ -48,14 +48,17 @@ public class ImagesService {
         metadata.setContentType(multipartFile.getContentType());
 
         amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
-        return CLOUD_FRONT_DOMAIN_NAME+"/"+originalFilename;
+        return CLOUD_FRONT_DOMAIN_NAME + "/" + originalFilename;
     }
 
     // ProductImages 엔티티 생성 및 저장
     public void createProductImages(ProductImagesRequestDto imagesRequestDto, Product product) {
         List<String> imagesUrl = imagesRequestDto.getImagesUrl();
+        if (imagesUrl.size() > 5) {
+            throw new IllegalArgumentException("업로드 할 수 있는 이미지의 최대 갯수는 5개입니다.");
+        }
         for (String imageUrl : imagesUrl) {
-            Images images = new Images(imageUrl, ImageType.PRODUCT ,product);
+            Images images = new Images(imageUrl, ImageType.PRODUCT, product);
             product.getImagesList().add(images);
             imagesRepository.save(images);
         }
@@ -63,7 +66,8 @@ public class ImagesService {
 
     // 프로필 업로드 메소드
     @Transactional
-    public ProfileImagesResponseDto uploadProfile(MultipartFile file, UserDetailsImpl userDetails) throws IOException {
+    public ProfileImagesResponseDto uploadProfile(MultipartFile file, UserDetailsImpl userDetails)
+            throws IOException {
         String originalFilename = file.getOriginalFilename();
         String s3FileName = UUID.randomUUID().toString().substring(0, 10) + originalFilename;
 
@@ -77,7 +81,8 @@ public class ImagesService {
         User user = userDetails.getUser();
 
         // 이전 프로필 이미지 삭제
-        Images existingProfileImage = imagesRepository.findByUserAndContentType(user, ImageType.PROFILE);
+        Images existingProfileImage = imagesRepository.findByUserAndContentType(user,
+                ImageType.PROFILE);
         if (existingProfileImage != null) {
             deleteFile(existingProfileImage.getImagesUrl());
             imagesRepository.delete(existingProfileImage);
@@ -120,7 +125,8 @@ public class ImagesService {
 
     // 새로운 이미지 업데이트 메서드 (이미지 추가 및 삭제 처리)
     @Transactional
-    public void updateProductImages(Product product, ProductImagesRequestDto imagesRequestDto, List<Long> imagesToDelete) {
+    public void updateProductImages(Product product, ProductImagesRequestDto imagesRequestDto,
+            List<Long> imagesToDelete) {
         // 1. 삭제할 이미지 처리
         if (imagesToDelete != null && !imagesToDelete.isEmpty()) {
             for (Long imageId : imagesToDelete) {
