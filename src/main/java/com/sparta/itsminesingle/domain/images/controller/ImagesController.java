@@ -57,6 +57,7 @@ public class ImagesController {
     // 파일 삭제 엔드포인트
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteFile(@RequestParam("fileUrl") String fileUrl) {
+        //fileUrl엔 객체Url이 들어가야함
         try {
             imagesService.deleteFile(fileUrl);
             return ResponseEntity.ok("파일 삭제 완료");
