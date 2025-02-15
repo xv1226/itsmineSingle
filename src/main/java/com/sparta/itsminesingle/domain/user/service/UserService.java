@@ -74,7 +74,7 @@ public class UserService {
 
         // JWT 생성 및 쿠키에 저장 후 Response 객체에 추가
         String accessToken = jwtUtil.createAccessToken(user.getUsername(), user.getUserRole());
-        String refreshToken = jwtUtil.createRefreshToken(user.getUsername());
+        String refreshToken = jwtUtil.createRefreshToken(user.getUsername(),  user.getUserRole());
 
         jwtUtil.addJwtToCookie(accessToken, refreshToken, res);
 

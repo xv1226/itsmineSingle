@@ -1,8 +1,12 @@
 package com.sparta.itsminesingle.domain.product.entity;
 
+import static com.sparta.itsminesingle.domain.product.utils.ProductStatus.BID;
+import static com.sparta.itsminesingle.domain.product.utils.ProductStatus.SUCCESS_BID;
+
 import com.sparta.itsminesingle.domain.auction.entity.Auction;
 import com.sparta.itsminesingle.domain.category.entity.Category;
 import com.sparta.itsminesingle.domain.images.entity.Images;
+import com.sparta.itsminesingle.domain.product.dto.ProductCreateDto;
 import com.sparta.itsminesingle.domain.product.utils.ProductStatus;
 import com.sparta.itsminesingle.domain.user.entity.User;
 import com.sparta.itsminesingle.global.common.TimeStamp;
@@ -23,6 +27,9 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -81,4 +88,95 @@ public class Product extends TimeStamp {
 
     private int likeCount;
 
+    /**
+     * 생성자 - 약속된 형태로만 생성가능하도록 합니다.
+     */
+    @Builder
+    public Product(String productName, String description, Integer startPrice,
+//따로 currentPrice를 받지 않습니다
+            Integer auctionNowPrice, LocalDateTime dueDate, Category category) {
+        this.productName = productName;
+        this.description = description;
+        this.startPrice = startPrice;
+        this.currentPrice = startPrice;
+        this.auctionNowPrice = auctionNowPrice;
+        this.dueDate = dueDate;
+        this.category = category;
+        this.likeCount = 0;
+
+        // set up initialized values
+        this.status = BID;
+    }
+
+    /**
+     * 연관관계 편의 메소드 - 반대쪽에는 연관관계 편의 메소드가 없도록 주의합니다.
+     */
+
+    public void assignUser(User user) {
+        this.user = user;
+    }
+
+    /**
+     * 서비스 메소드 - 외부에서 엔티티를 수정할 메소드를 정의합니다. (단일 책임을 가지도록 주의합니다.)
+     */
+
+    public void updateProduct(Product product, ProductCreateDto createDto, Integer hour) {
+        this.productName = Optional.ofNullable(createDto.getProductName())
+                .orElse(product.getProductName());
+        this.description = Optional.ofNullable(createDto.getDescription())
+                .orElse(product.getDescription());
+        this.auctionNowPrice = Optional.ofNullable(createDto.getAuctionNowPrice())
+                .orElse(product.getAuctionNowPrice());
+        this.currentPrice = Optional.ofNullable(createDto.getStartPrice())//시작가 때문에 수정한 부분입니다
+                .orElse(product.getCurrentPrice());
+        if (hour != null) {
+            this.dueDate = product.getDueDate().plusHours(hour);
+        } else {
+            this.dueDate = product.getDueDate();
+        }
+    }
+
+    public void currentPriceUpdate(Integer bidPrice) {
+        this.currentPrice = bidPrice;
+    }
+
+    public void markAsDeleted() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void updateStatus(ProductStatus status) {
+        this.status = status;
+    }
+
+    public void extendDueDateByHours(Integer hours) {
+        this.dueDate = this.getDueDate().plusHours(hours);
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public List<String> getImageUrls() {
+        return imagesList.stream()
+                .map(Images::getImagesUrl)
+                .collect(Collectors.toList());
+    }
+
+    public String getThumbnailUrl() {
+        if (!imagesList.isEmpty()) {
+            return imagesList.get(0).getImagesUrl();
+        }
+        return null; // or a default image URL
+    }
+
+    public void countUpdate(int count) {
+        this.likeCount = this.likeCount + count;
+    }
+
+    public void blockProductWithOutSuccessBid(Product product) {
+        if(!product.getStatus().equals(SUCCESS_BID)){
+            this.status = ProductStatus.FAIL_BID;
+            this.deletedAt = LocalDateTime.now();
+        }
+    }
 }

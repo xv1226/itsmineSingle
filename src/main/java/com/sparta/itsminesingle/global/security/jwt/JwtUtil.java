@@ -61,8 +61,8 @@ public class JwtUtil {
     }
 
     // RefreshToken 생성
-    public String createRefreshToken(String username) {
-        return createToken(username, null, REFRESH_TOKEN_TIME);
+    public String createRefreshToken(String username,UserRole role) {
+        return createToken(username, role , REFRESH_TOKEN_TIME);
     }
 
     // 토큰 생성 (내부에서 사용)
