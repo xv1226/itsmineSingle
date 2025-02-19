@@ -1,13 +1,13 @@
 package com.sparta.itsminesingle.domain.category.controller;
 
-import static com.sparta.itsminesingle.global.common.response.ResponseCodeEnum.CATEGORY_SUCCESS_GET;
-import static com.sparta.itsminesingle.global.common.response.ResponseCodeEnum.SUCCESS_TO_MAKE_NEW_CATEGORY;
+import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.CATEGORY_SUCCESS_GET;
+import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.SUCCESS_TO_MAKE_NEW_CATEGORY;
 
 import com.sparta.itsminesingle.domain.category.dto.CategoryDto;
 import com.sparta.itsminesingle.domain.category.dto.CategoryResponseDto;
 import com.sparta.itsminesingle.domain.category.service.CategoryService;
-import com.sparta.itsminesingle.global.common.response.HttpResponseDto;
-import com.sparta.itsminesingle.global.common.response.ResponseUtils;
+import com.sparta.itsminesingle.global.response.HttpResponseDto;
+import com.sparta.itsminesingle.global.response.ResponseUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

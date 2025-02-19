@@ -1,6 +1,6 @@
 package com.sparta.itsminesingle.domain.category.entity;
 
-import com.sparta.itsminesingle.global.common.TimeStamp;
+import com.sparta.itsminesingle.global.TimeStamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

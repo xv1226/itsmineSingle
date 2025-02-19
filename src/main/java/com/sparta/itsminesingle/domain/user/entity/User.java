@@ -1,7 +1,7 @@
 package com.sparta.itsminesingle.domain.user.entity;
 
 import com.sparta.itsminesingle.domain.user.utils.UserRole;
-import com.sparta.itsminesingle.global.common.TimeStamp;
+import com.sparta.itsminesingle.global.TimeStamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,8 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

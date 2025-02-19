@@ -1,6 +1,7 @@
 package com.sparta.itsminesingle.global.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.itsminesingle.domain.redis.RedisService;
 import com.sparta.itsminesingle.domain.user.dto.LoginRequestDto;
 import com.sparta.itsminesingle.domain.user.utils.UserRole;
 import com.sparta.itsminesingle.global.security.UserDetailsImpl;
@@ -8,8 +9,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
+
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -18,6 +22,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Slf4j(topic = "로그인 및 JWT 생성") // Spring Security의 인증 흐름에 따라 로그인 요청을 처리하는 필터
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
+    @Autowired
+    private RedisService redisService;
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
@@ -54,7 +60,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String refreshToken = jwtUtil.createRefreshToken(username, role);
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
-        response.addHeader("RefreshToken", refreshToken);
+        // Redis에 RefreshToken 저장
+        redisService.saveRefreshToken(username, refreshToken);
 
         // JSON 형식으로 로그인 성공 메시지 작성
         String loginSuccessMessage = String.format("{\"message\": \"로그인 완료\", \"accessToken\": \"%s\", \"refreshToken\": \"%s\"}", accessToken, refreshToken);
@@ -78,7 +85,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         response.getWriter().write(result);
     }
-
 
 
 }

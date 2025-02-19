@@ -1,6 +1,6 @@
 package com.sparta.itsminesingle.global.exception.productimages;
 
-import com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum;
+import com.sparta.itsminesingle.global.response.ResponseExceptionEnum;
 import com.sparta.itsminesingle.global.exception.comment.CommentException;
 
 public class InvalidURLException extends CommentException {

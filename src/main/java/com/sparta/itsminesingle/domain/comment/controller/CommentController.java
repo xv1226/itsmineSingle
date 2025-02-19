@@ -1,16 +1,16 @@
 package com.sparta.itsminesingle.domain.comment.controller;
 
-import static com.sparta.itsminesingle.global.common.response.ResponseCodeEnum.COMMENT_SUCCESS_CREATE;
-import static com.sparta.itsminesingle.global.common.response.ResponseCodeEnum.COMMENT_SUCCESS_DELETE;
-import static com.sparta.itsminesingle.global.common.response.ResponseCodeEnum.COMMENT_SUCCESS_GET;
-import static com.sparta.itsminesingle.global.common.response.ResponseCodeEnum.COMMENT_SUCCESS_UPDATE;
-import static com.sparta.itsminesingle.global.common.response.ResponseUtils.of;
+import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.COMMENT_SUCCESS_CREATE;
+import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.COMMENT_SUCCESS_DELETE;
+import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.COMMENT_SUCCESS_GET;
+import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.COMMENT_SUCCESS_UPDATE;
+import static com.sparta.itsminesingle.global.response.ResponseUtils.of;
 
 import com.sparta.itsminesingle.domain.comment.dto.AddCommentResponseDto;
 import com.sparta.itsminesingle.domain.comment.dto.CommentRequestDto;
 import com.sparta.itsminesingle.domain.comment.dto.CommentResponseDto;
 import com.sparta.itsminesingle.domain.comment.service.CommentService;
-import com.sparta.itsminesingle.global.common.response.HttpResponseDto;
+import com.sparta.itsminesingle.global.response.HttpResponseDto;
 import com.sparta.itsminesingle.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

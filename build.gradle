@@ -24,19 +24,28 @@ repositories {
 }
 
 dependencies {
+    //  redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     // JWT
     compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
-
+    //  AWS S3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    //  validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    //  jpa
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    //  security
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    //  spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    //  lombok
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+    //  mysql
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    //  test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

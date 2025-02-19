@@ -1,8 +1,8 @@
 package com.sparta.itsminesingle.global.exception;
 
-import static com.sparta.itsminesingle.global.common.response.ResponseUtils.of;
+import static com.sparta.itsminesingle.global.response.ResponseUtils.of;
 
-import com.sparta.itsminesingle.global.common.response.HttpResponseDto;
+import com.sparta.itsminesingle.global.response.HttpResponseDto;
 import com.sparta.itsminesingle.global.exception.product.ProductException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

@@ -1,10 +1,10 @@
 package com.sparta.itsminesingle.domain.qna.service;
 
 import static com.sparta.itsminesingle.domain.user.utils.UserRole.MANAGER;
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.INVALID_PASSWORD;
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.PRODUCT_NOT_FOUND;
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.QNA_NOT_FOUND;
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.UNAUTHORIZED_ACCESS;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.INVALID_PASSWORD;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.PRODUCT_NOT_FOUND;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.QNA_NOT_FOUND;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.UNAUTHORIZED_ACCESS;
 
 import com.sparta.itsminesingle.domain.product.entity.Product;
 import com.sparta.itsminesingle.domain.product.repository.ProductRepository;

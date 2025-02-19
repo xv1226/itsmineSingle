@@ -20,15 +20,18 @@ import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Slf4j(topic = "JwtUtil")
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
 
     // Header KEY 값
@@ -38,8 +41,10 @@ public class JwtUtil {
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
-    private final long ACCESS_TOKEN_TIME = 30 * 60 * 1000L; // 30분
+    private final long ACCESS_TOKEN_TIME = 5 * 1000L; // 5초
     private final long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
+
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
@@ -61,8 +66,8 @@ public class JwtUtil {
     }
 
     // RefreshToken 생성
-    public String createRefreshToken(String username,UserRole role) {
-        return createToken(username, role , REFRESH_TOKEN_TIME);
+    public String createRefreshToken(String username, UserRole role) {
+        return createToken(username, role, REFRESH_TOKEN_TIME);
     }
 
     // 토큰 생성 (내부에서 사용)
@@ -107,10 +112,35 @@ public class JwtUtil {
         return null;
     }
 
+    /**
+     * Refresh 토큰 검증
+     */
+    public boolean hasRefreshToken(String username) {
+        // redis에서 토큰에 맞는 키가 존재하면 true
+        return Boolean.TRUE.equals(redisTemplate.hasKey(username));
+    }
+
+    /**
+     * 토큰에서 username 가져오기
+     */
+    public String getUsernameFromToken(String Token) {
+        try {
+            Claims claims = getUserInfoFromToken(Token);
+            return claims.getSubject();
+        } catch (ExpiredJwtException e) {
+            // 토큰이 만료된 경우에도 가져옴
+            return e.getClaims().getSubject();
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+
     // JWT Cookie 에 저장
     public void addJwtToCookie(String accessToken, String refreshToken, HttpServletResponse res) {
         try {
-            accessToken = URLEncoder.encode(accessToken, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding
+            accessToken = URLEncoder.encode(accessToken, "utf-8")
+                    .replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding
             refreshToken = URLEncoder.encode(refreshToken, "utf-8").replaceAll("\\+", "%20");
 
             Cookie accessTokenCookie = new Cookie(AUTHORIZATION_HEADER, accessToken); // Name-Value
@@ -146,7 +176,8 @@ public class JwtUtil {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
                     try {
-                        return URLDecoder.decode(cookie.getValue(), "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
+                        return URLDecoder.decode(cookie.getValue(),
+                                "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
                     } catch (UnsupportedEncodingException e) {
                         return null;
                     }
@@ -181,7 +212,6 @@ public class JwtUtil {
         }
         return false;
     }
-
 
 
     // 토큰에서 사용자 정보 가져오기

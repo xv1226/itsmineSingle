@@ -1,11 +1,11 @@
 package com.sparta.itsminesingle.domain.qna.controller;
 
-import static com.sparta.itsminesingle.global.common.response.ResponseCodeEnum.NULL_QNA_LIST;
-import static com.sparta.itsminesingle.global.common.response.ResponseCodeEnum.SUCCESS_CREATE_QNA;
-import static com.sparta.itsminesingle.global.common.response.ResponseCodeEnum.SUCCESS_DELETE_QNA;
-import static com.sparta.itsminesingle.global.common.response.ResponseCodeEnum.SUCCESS_QNA_LIST;
-import static com.sparta.itsminesingle.global.common.response.ResponseCodeEnum.SUCCESS_UPDATE_QNA;
-import static com.sparta.itsminesingle.global.common.response.ResponseUtils.of;
+import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.NULL_QNA_LIST;
+import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.SUCCESS_CREATE_QNA;
+import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.SUCCESS_DELETE_QNA;
+import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.SUCCESS_QNA_LIST;
+import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.SUCCESS_UPDATE_QNA;
+import static com.sparta.itsminesingle.global.response.ResponseUtils.of;
 
 
 import com.sparta.itsminesingle.domain.qna.dto.GetQnaResponseDto;
@@ -13,8 +13,8 @@ import com.sparta.itsminesingle.domain.qna.dto.QnAChangeRequestDto;
 import com.sparta.itsminesingle.domain.qna.dto.QnaRequestDto;
 import com.sparta.itsminesingle.domain.qna.service.QnaService;
 import com.sparta.itsminesingle.domain.user.entity.User;
-import com.sparta.itsminesingle.global.common.response.HttpResponseDto;
-import com.sparta.itsminesingle.global.common.response.ResponseUtils;
+import com.sparta.itsminesingle.global.response.HttpResponseDto;
+import com.sparta.itsminesingle.global.response.ResponseUtils;
 import com.sparta.itsminesingle.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

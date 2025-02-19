@@ -1,9 +1,9 @@
 package com.sparta.itsminesingle.domain.comment.repository;
 
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.COMMENT_ALREADY_EXISTS;
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.COMMENT_NOT_FOUND;
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.NO_AUTHORIZATION_COMMNET;
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.QNA_NOT_FOUND;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.COMMENT_ALREADY_EXISTS;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.COMMENT_NOT_FOUND;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.NO_AUTHORIZATION_COMMNET;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.QNA_NOT_FOUND;
 
 import com.sparta.itsminesingle.domain.comment.entity.Comment;
 import com.sparta.itsminesingle.domain.qna.entity.Qna;

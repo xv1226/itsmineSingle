@@ -1,4 +1,4 @@
-package com.sparta.itsminesingle.global.common.response;
+package com.sparta.itsminesingle.global.response;
 
 import org.springframework.http.ResponseEntity;
 

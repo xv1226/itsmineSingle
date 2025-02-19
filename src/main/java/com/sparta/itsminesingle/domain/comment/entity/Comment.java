@@ -2,7 +2,7 @@ package com.sparta.itsminesingle.domain.comment.entity;
 
 import com.sparta.itsminesingle.domain.comment.dto.CommentRequestDto;
 import com.sparta.itsminesingle.domain.qna.entity.Qna;
-import com.sparta.itsminesingle.global.common.TimeStamp;
+import com.sparta.itsminesingle.global.TimeStamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

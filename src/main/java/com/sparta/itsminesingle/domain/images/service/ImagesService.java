@@ -1,6 +1,6 @@
 package com.sparta.itsminesingle.domain.images.service;
 
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.INVALID_URL_EXCEPTION;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.INVALID_URL_EXCEPTION;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;

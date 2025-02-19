@@ -40,11 +40,11 @@ public class UserController {
         return userService.signup(requestDto);
     }
 
-    @PostMapping("/user/login")
+/*    @PostMapping("/user/login")
     public ResponseEntity<UserResponseDto> login(LoginRequestDto requestDto, HttpServletResponse res) {
 
         return userService.login(requestDto, res);
-    }
+    }*/
 
     @PostMapping("/user/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
@@ -54,10 +54,13 @@ public class UserController {
             session.invalidate();
         }
 
-        // 쿠키 삭제
+        // 쿠키 전체 삭제
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
+                cookie.setValue(null);
+                cookie.setPath("/");
+                cookie.setHttpOnly(true);
                 cookie.setMaxAge(0);
                 response.addCookie(cookie);
             }

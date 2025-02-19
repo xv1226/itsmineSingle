@@ -1,15 +1,14 @@
 package com.sparta.itsminesingle.domain.qna.entity;
 
 import static com.sparta.itsminesingle.domain.user.utils.UserRole.MANAGER;
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.COMMENT_EQUAL_SELLER;
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.QNA_USER_NOT_VALID;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.COMMENT_EQUAL_SELLER;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.QNA_USER_NOT_VALID;
 
 import com.sparta.itsminesingle.domain.comment.entity.Comment;
 import com.sparta.itsminesingle.domain.product.entity.Product;
 import com.sparta.itsminesingle.domain.qna.dto.QnaRequestDto;
 import com.sparta.itsminesingle.domain.user.entity.User;
-import com.sparta.itsminesingle.domain.user.utils.UserRole;
-import com.sparta.itsminesingle.global.common.TimeStamp;
+import com.sparta.itsminesingle.global.TimeStamp;
 import com.sparta.itsminesingle.global.exception.DataDuplicatedException;
 import com.sparta.itsminesingle.global.exception.comment.CommentEqualSellerException;
 import jakarta.persistence.CascadeType;

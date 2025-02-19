@@ -1,6 +1,6 @@
 package com.sparta.itsminesingle.domain.images.controller;
 
-import static com.sparta.itsminesingle.global.common.response.ResponseExceptionEnum.USER_NOT_FOUND;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.USER_NOT_FOUND;
 
 import com.sparta.itsminesingle.domain.images.dto.ProductImagesResponseDto;
 import com.sparta.itsminesingle.domain.images.dto.ProfileImagesResponseDto;

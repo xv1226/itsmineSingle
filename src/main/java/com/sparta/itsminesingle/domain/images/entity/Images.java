@@ -3,7 +3,7 @@ package com.sparta.itsminesingle.domain.images.entity;
 import com.sparta.itsminesingle.domain.images.util.ImageType;
 import com.sparta.itsminesingle.domain.product.entity.Product;
 import com.sparta.itsminesingle.domain.user.entity.User;
-import com.sparta.itsminesingle.global.common.TimeStamp;
+import com.sparta.itsminesingle.global.TimeStamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
