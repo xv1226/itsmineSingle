@@ -4,11 +4,13 @@ import com.sparta.itsminesingle.domain.user.dto.LoginRequestDto;
 import com.sparta.itsminesingle.domain.user.dto.SignupRequestDto;
 import com.sparta.itsminesingle.domain.user.dto.UserResponseDto;
 import com.sparta.itsminesingle.domain.user.entity.User;
+import com.sparta.itsminesingle.domain.user.repository.UserBatchRepository;
 import com.sparta.itsminesingle.domain.user.repository.UserRepository;
 import com.sparta.itsminesingle.domain.user.utils.UserRole;
 import com.sparta.itsminesingle.global.security.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final UserBatchRepository userBatchRepository;
 
     public ResponseEntity<UserResponseDto> signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
@@ -39,15 +42,30 @@ public class UserService {
         }
 
         // 사용자 등록
-        User user = new User(username, password, name, nickname, email, userRole, address);
+        User user = new User(username, password, name, nickname, email, userRole, address,
+                null);
         userRepository.save(user);
 
         return ResponseEntity.ok(new UserResponseDto(user));
     }
 
     @Transactional
+    public ResponseEntity<String> userListSignUp(SignupRequestDto requestDto,int n) {
+
+        List<User> userList = requestDto.userListRequest(requestDto, n);
+
+        if (userList.isEmpty()) {
+            return ResponseEntity.badRequest().body("유저리스트 비어 있음");
+        }
+
+        userBatchRepository.insert(userList);
+
+        return ResponseEntity.ok("유저리스트 회원가입 완료");
+    }
+
+    @Transactional
     public ResponseEntity<String> deleteById(Long id, String password) {
-        User user=userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow();
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -74,7 +92,7 @@ public class UserService {
 
         // JWT 생성 및 쿠키에 저장 후 Response 객체에 추가
         String accessToken = jwtUtil.createAccessToken(user.getUsername(), user.getUserRole());
-        String refreshToken = jwtUtil.createRefreshToken(user.getUsername(),  user.getUserRole());
+        String refreshToken = jwtUtil.createRefreshToken(user.getUsername(), user.getUserRole());
 
         jwtUtil.addJwtToCookie(accessToken, refreshToken, res);
 

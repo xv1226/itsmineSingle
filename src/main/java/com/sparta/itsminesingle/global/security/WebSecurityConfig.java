@@ -1,5 +1,6 @@
 package com.sparta.itsminesingle.global.security;
 
+import com.sparta.itsminesingle.domain.user.repository.UserRepository;
 import com.sparta.itsminesingle.global.security.jwt.JwtAuthenticationFilter;
 import com.sparta.itsminesingle.global.security.jwt.JwtAuthorizationFilter;
 import com.sparta.itsminesingle.global.security.jwt.JwtUtil;
@@ -27,6 +28,7 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserRepository userRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,14 +42,14 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil,userRepository);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, redisTemplate);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, redisTemplate,userRepository);
     }
 
     @Bean
@@ -65,6 +67,7 @@ public class WebSecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
                         .requestMatchers("/api/user/signup").permitAll() // 회원가입 요청 허가
+                        .requestMatchers("/api/list/signup").permitAll()
                         .requestMatchers("/api/user/login").permitAll() // 로그인 요청 허가
                         .requestMatchers("/api/user/**").authenticated() // '/api/user/'로 시작하는 요청 인증 필요
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리

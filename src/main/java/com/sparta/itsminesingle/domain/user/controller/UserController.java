@@ -40,6 +40,11 @@ public class UserController {
         return userService.signup(requestDto);
     }
 
+    @PostMapping("/list/signup")
+    public ResponseEntity<String> userListSignUp(@RequestBody @Valid SignupRequestDto requestDto,@RequestParam int n){
+        return userService.userListSignUp(requestDto,n);
+    }
+
 /*    @PostMapping("/user/login")
     public ResponseEntity<UserResponseDto> login(LoginRequestDto requestDto, HttpServletResponse res) {
 

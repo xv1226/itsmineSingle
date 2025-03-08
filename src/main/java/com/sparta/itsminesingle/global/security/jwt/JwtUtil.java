@@ -1,5 +1,7 @@
 package com.sparta.itsminesingle.global.security.jwt;
 
+import com.sparta.itsminesingle.domain.user.entity.User;
+import com.sparta.itsminesingle.domain.user.repository.UserRepository;
 import com.sparta.itsminesingle.domain.user.utils.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -22,6 +24,7 @@ import java.util.Base64;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.type.TrueFalseConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +48,7 @@ public class JwtUtil {
     private final long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
 
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserRepository userRepository;
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
@@ -117,7 +121,9 @@ public class JwtUtil {
      */
     public boolean hasRefreshToken(String username) {
         // redis에서 토큰에 맞는 키가 존재하면 true
-        return Boolean.TRUE.equals(redisTemplate.hasKey(username));
+//        return Boolean.TRUE.equals(redisTemplate.hasKey(username));
+        User user=userRepository.findByUsername(username).orElseThrow();
+        return username.equals(user.getUsername());
     }
 
     /**

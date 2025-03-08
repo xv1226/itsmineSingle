@@ -1,5 +1,7 @@
 package com.sparta.itsminesingle.global.security.jwt;
 
+import com.sparta.itsminesingle.domain.user.entity.User;
+import com.sparta.itsminesingle.domain.user.repository.UserRepository;
 import com.sparta.itsminesingle.domain.user.utils.UserRole;
 import com.sparta.itsminesingle.global.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
@@ -10,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,6 +30,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserRepository userRepository;
 
 
     @Override
@@ -41,7 +45,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     setAuthentication(accessToken, request);
                 }
                 else if (jwtUtil.hasRefreshToken(username)) {
-                    String refreshToken = jwtUtil.substringToken(redisTemplate.opsForValue().get(username));
+//                    String refreshToken = jwtUtil.substringToken(redisTemplate.opsForValue().get(username));
+                    User user=userRepository.findByUsername(username).orElseThrow();
+                    String refreshToken = jwtUtil.substringToken(user.getRefreshToken());
                     Claims claims = jwtUtil.getUserInfoFromToken(refreshToken);
                     String newAccessToken = jwtUtil.getTokenWithoutBearer(jwtUtil.createAccessToken(claims.getSubject(), UserRole.valueOf(claims.get(JwtUtil.AUTHORIZATION_KEY).toString())));
                     response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);

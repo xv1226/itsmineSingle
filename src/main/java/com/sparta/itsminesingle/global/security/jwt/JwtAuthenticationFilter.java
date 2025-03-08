@@ -3,6 +3,8 @@ package com.sparta.itsminesingle.global.security.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.itsminesingle.domain.redis.RedisService;
 import com.sparta.itsminesingle.domain.user.dto.LoginRequestDto;
+import com.sparta.itsminesingle.domain.user.entity.User;
+import com.sparta.itsminesingle.domain.user.repository.UserRepository;
 import com.sparta.itsminesingle.domain.user.utils.UserRole;
 import com.sparta.itsminesingle.global.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
@@ -12,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,9 +27,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final JwtUtil jwtUtil;
     @Autowired
     private RedisService redisService;
+    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
         setFilterProcessesUrl("/api/user/login");
     }
 
@@ -53,6 +58,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
         UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
+        long userId=userDetails.getUser().getId();
         String username = userDetails.getUsername();
         UserRole role = userDetails.getUser().getUserRole();
 
@@ -61,7 +67,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
         // Redis에 RefreshToken 저장
-        redisService.saveRefreshToken(username, refreshToken);
+//        redisService.saveRefreshToken(username, refreshToken);
+
+        User user=userRepository.findById(userId).orElseThrow();
+        user.updateRefreshToken(refreshToken);
+        userRepository.save(user);
 
         // JSON 형식으로 로그인 성공 메시지 작성
         String loginSuccessMessage = String.format("{\"message\": \"로그인 완료\", \"accessToken\": \"%s\", \"refreshToken\": \"%s\"}", accessToken, refreshToken);

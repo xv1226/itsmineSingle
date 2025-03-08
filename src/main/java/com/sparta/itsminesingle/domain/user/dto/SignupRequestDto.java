@@ -1,9 +1,13 @@
 package com.sparta.itsminesingle.domain.user.dto;
 
 
+import com.sparta.itsminesingle.domain.user.entity.User;
+import com.sparta.itsminesingle.domain.user.utils.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 
 @Getter
@@ -25,4 +29,24 @@ public class SignupRequestDto {
     private boolean isAdmin;
     private String adminToken;
     private String address;
+
+    public List<User> userListRequest(SignupRequestDto requestDto, int n) {
+        List<User> userList = new ArrayList<>(n);
+
+        for (int i = 0; i < n; i++) {
+            String username = requestDto.getUsername() + i;
+            String password = requestDto.getPassword();
+            String name = requestDto.getName();
+            String nickname = requestDto.getNickname() + i;
+            String email = requestDto.getEmail() + i;
+            UserRole userRole = UserRole.USER;
+            String address = requestDto.getAddress();
+
+            User user = new User(username, password, name, nickname, email, userRole, address, null);
+
+            userList.add(user);
+        }
+        return userList;
+    }
+
 }

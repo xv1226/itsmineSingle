@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -47,9 +48,12 @@ public class User extends TimeStamp {
     @Column(nullable = false)
     private String address;
 
+    @Column
+    private String refreshToken;
+
 
     public User(String username, String password, String name, String nickname, String email,
-            UserRole userRole, String address) {
+            UserRole userRole, String address, String refreshToken) {
         this.username = username;
         this.password = password;
         this.name = name;
@@ -57,5 +61,11 @@ public class User extends TimeStamp {
         this.email = email;
         this.userRole = userRole;
         this.address = address;
+        this.refreshToken = refreshToken;
     }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
 }
