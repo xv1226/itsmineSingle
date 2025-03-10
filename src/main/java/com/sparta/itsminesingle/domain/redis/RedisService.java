@@ -1,7 +1,9 @@
 package com.sparta.itsminesingle.domain.redis;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -26,5 +28,13 @@ public class RedisService {
     public String getValue(String prefix, String key) {
         String redisKey = prefix + key;  // Prefix를 앞에 붙임
         return redisTemplate.opsForValue().get(redisKey);
+    }
+
+    public void insertMillionRecords(String username, String refreshToken) {
+        IntStream.range(0, 1_000_000).parallel().forEach(i -> {
+            String key = username + i;
+            String value = refreshToken+i;
+            saveRefreshToken(key, value);
+        });
     }
 }
