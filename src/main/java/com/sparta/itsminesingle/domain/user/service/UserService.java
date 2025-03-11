@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final UserBatchRepository userBatchRepository;
+    private final RedisTemplate<String,String> redisTemplate;
 
     public ResponseEntity<UserResponseDto> signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
@@ -61,6 +63,16 @@ public class UserService {
         userBatchRepository.insert(userList);
 
         return ResponseEntity.ok("유저리스트 회원가입 완료");
+    }
+
+    public ResponseEntity<String> tokenSelect(String username){
+        User user=userRepository.findByUsername(username).orElseThrow();
+        return ResponseEntity.ok(user.getRefreshToken());
+    }
+
+    public ResponseEntity<String> tokenRedisGet(String username){
+        String refreshToken=redisTemplate.opsForValue().get(username);
+        return ResponseEntity.ok(refreshToken);
     }
 
     @Transactional
