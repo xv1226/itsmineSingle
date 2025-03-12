@@ -1,9 +1,14 @@
 package com.sparta.itsminesingle.domain.auction.entity;
 
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.AUCTION_DENIED_BID;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.AUCTION_IMPOSSIBLE_BID;
+import static com.sparta.itsminesingle.global.response.ResponseExceptionEnum.AUCTION_IMPOSSIBLE_BID_CAUSE_STATUS;
+
 import com.sparta.itsminesingle.domain.product.entity.Product;
 import com.sparta.itsminesingle.domain.product.utils.ProductStatus;
 import com.sparta.itsminesingle.domain.user.entity.User;
 import com.sparta.itsminesingle.global.TimeStamp;
+import com.sparta.itsminesingle.global.exception.DataFormatException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +20,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -46,4 +52,43 @@ public class Auction extends TimeStamp {
     @JoinColumn(name = "product_id")
     private Product product;
 
+
+    @Builder
+    public Auction(User user, Product product, Integer bidPrice, ProductStatus status,Integer totalAmount) {
+        this.user = user;
+        this.product = product;
+        this.bidPrice = bidPrice;
+        this.status = status;
+        this.totalAmount=totalAmount;
+    }
+
+    public void updateStatus(ProductStatus status) {
+        this.status = status;
+    }
+
+    public void checkUser(User user, Product product) {
+        if (user.getId().equals(product.getUser().getId())) {
+            throw new DataFormatException(AUCTION_DENIED_BID);
+        }
+    }
+
+    public void checkBidPrice(Integer bidPrice,Product product) {
+        //현재 입찰가(고른 상품에서 가장 높은 입찰가 or 상품 처음 입찰가) 이하이거나 즉시구매가를 넘어서 입찰하려하면 예외처리
+        if (bidPrice <= product.getCurrentPrice()
+                || bidPrice > product.getAuctionNowPrice()) {
+            throw new DataFormatException(AUCTION_IMPOSSIBLE_BID);
+        }
+    }
+
+    public void checkStatus(ProductStatus status) {
+        if (!status.equals(ProductStatus.BID)) {
+            throw new DataFormatException(AUCTION_IMPOSSIBLE_BID_CAUSE_STATUS);
+        }
+    }
+
+    public void checkCurrentPrice(Integer bidPrice, Integer currentPrice) {
+        if (bidPrice <= currentPrice) {
+            throw new DataFormatException(AUCTION_IMPOSSIBLE_BID);
+        }
+    }
 }
