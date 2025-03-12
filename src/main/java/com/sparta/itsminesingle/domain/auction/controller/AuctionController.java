@@ -3,6 +3,7 @@ package com.sparta.itsminesingle.domain.auction.controller;
 import static com.sparta.itsminesingle.global.response.ResponseCodeEnum.AUCTION_SUCCESS_GET;
 
 import com.sparta.itsminesingle.domain.auction.dto.AuctionProductImageResponseDto;
+import com.sparta.itsminesingle.domain.auction.service.AuctionService;
 import com.sparta.itsminesingle.global.response.HttpResponseDto;
 import com.sparta.itsminesingle.global.response.ResponseUtils;
 import com.sparta.itsminesingle.global.security.UserDetailsImpl;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuctionController {
 
-/*    private final AuctionService auctionService;
+    private final AuctionService auctionService;
 
     //유저(구매자(본인)) 입찰 조회(QueryDSL)
     @GetMapping("/auctions")
@@ -29,6 +30,6 @@ public class AuctionController {
         Page<AuctionProductImageResponseDto> responseDto = auctionService.getAuctionByUser(
                 userDetails.getUser(), pageable);
         return ResponseUtils.of(AUCTION_SUCCESS_GET, responseDto);
-    }*/
+    }
 
 }
