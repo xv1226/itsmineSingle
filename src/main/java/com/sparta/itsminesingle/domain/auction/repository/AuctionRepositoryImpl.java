@@ -48,8 +48,8 @@ public class AuctionRepositoryImpl implements CustomAuctionRepository {
                         product.productName,
                         auction.bidPrice.max(), auction.status))
                 .from(auction)
-                .innerJoin(auction.product, product)
-                .innerJoin(auction.user, user)
+//                .innerJoin(auction.product, product)
+//                .innerJoin(auction.user, user)
                 .where(user.id.eq(userId).and(auction.status.eq(product.status))
                         .and(auction.status.ne(NEED_PAYMENT)))
                 .groupBy(product.id)
@@ -68,8 +68,8 @@ public class AuctionRepositoryImpl implements CustomAuctionRepository {
         Long count = jpaQueryFactory
                 .select(auction.id.countDistinct())
                 .from(auction)
-                .innerJoin(auction.product, product)
-                .innerJoin(auction.user, user)
+//                .innerJoin(auction.product, product)
+//                .innerJoin(auction.user, user)
                 .where(user.id.eq(userId))
                 .fetchOne();
 
