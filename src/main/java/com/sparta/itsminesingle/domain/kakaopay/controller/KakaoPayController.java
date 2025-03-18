@@ -52,15 +52,14 @@ public class KakaoPayController {
             @PathVariable("openType") String openType, @RequestParam("pg_token") String pgToken,
             @PathVariable("productId") Long productId, @PathVariable("userId") Long userId,
             @PathVariable("auctionId") Long auctionId) {
-        kakaoPayService.approve(pgToken, productId, userId, auctionId);
-        /*String redirectUrl = "https://itsyours.store/itsmine?status=success";
+        /*kakaoPayService.approve(pgToken, productId, userId, auctionId);
+        String redirectUrl = "https://itsyours.store/itsmine?status=success";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(redirectUrl));
 
         return new ResponseEntity<>(headers, HttpStatus.SEE_OTHER);*/
-        KakaoPayApproveResponseDto kakaoPayApproveResponseDto = kakaoPayService.approve(pgToken,
-                productId, userId, auctionId);
+        KakaoPayApproveResponseDto kakaoPayApproveResponseDto = kakaoPayService.approve(pgToken, productId, userId, auctionId);
         return ResponseUtils.of(KAKAOPAY_APPROVE, kakaoPayApproveResponseDto);
     }
 
