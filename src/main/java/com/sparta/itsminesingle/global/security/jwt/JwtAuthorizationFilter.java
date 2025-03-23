@@ -30,8 +30,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = jwtUtil.getTokenWithoutBearer(request.getHeader("Authorization"));
         String username = jwtUtil.getUsernameFromToken(accessToken);
 
@@ -39,23 +38,38 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             if ((StringUtils.hasText(accessToken))) {
                 if (jwtUtil.validateToken(accessToken)) {
                     setAuthentication(accessToken, request);
+                    log.info("정상적인 엑세스 토큰");
+                    if(jwtUtil.isTokenExpiringSoon(accessToken)){
+                        UpdateAccessToken(request,response,accessToken);
+                        log.info("만료 임박한 엑세스 토큰 재발급 완료");
+                    }
                 }
                 else if (jwtUtil.hasRefreshToken(username)) {
                     String refreshToken = jwtUtil.substringToken(redisTemplate.opsForValue().get(username));
-                    Claims claims = jwtUtil.getUserInfoFromToken(refreshToken);
-                    String newAccessToken = jwtUtil.getTokenWithoutBearer(jwtUtil.createAccessToken(claims.getSubject(), UserRole.valueOf(claims.get(JwtUtil.AUTHORIZATION_KEY).toString())));
-                    response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
-                    setAuthentication(newAccessToken, request);
+                    UpdateAccessToken(request,response,refreshToken);
+                    log.info("리프래시 완료, 엑세스 토큰 재발급 완료");
+                }
+                else{
+                    log.warn("No valid access or refresh token found for user: {}",username);
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Authentication required");
+                    return;
                 }
             }
-
         } catch (Exception e) {
             log.error("Token Error: {}", e.getMessage());
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid or expired token");
             return;
         }
-
         filterChain.doFilter(request, response);
+    }
+
+    // 토큰 확인 후 재발급
+    private void UpdateAccessToken(HttpServletRequest request, HttpServletResponse response,String Token){
+        Claims claims = jwtUtil.getUserInfoFromToken(Token);
+        String newAccessToken = jwtUtil.createAccessToken(claims.getSubject(), UserRole.valueOf(claims.get(JwtUtil.AUTHORIZATION_KEY).toString()));
+        String newToken=jwtUtil.getTokenWithoutBearer(newAccessToken);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, newAccessToken);
+        setAuthentication(newToken, request);
     }
 
     // 인증 처리

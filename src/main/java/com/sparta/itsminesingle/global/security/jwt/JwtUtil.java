@@ -41,7 +41,7 @@ public class JwtUtil {
     // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
-    private final long ACCESS_TOKEN_TIME = 5 * 1000L; // 5초
+    private final long ACCESS_TOKEN_TIME = 60 * 1000L; // 1분
     private final long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
 
     private final RedisTemplate<String, String> redisTemplate;
@@ -170,7 +170,7 @@ public class JwtUtil {
     }*/
 
     // HttpServletRequest 에서 Cookie Value : JWT 가져오기
-    public String getTokenFromRequest(HttpServletRequest req) {
+/*    public String getTokenFromRequest(HttpServletRequest req) {
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -185,7 +185,20 @@ public class JwtUtil {
             }
         }
         return null;
+    }*/
+
+    public boolean isTokenExpiringSoon(String accessToken) {
+        try {
+            Claims userInfo = getUserInfoFromToken(accessToken);
+            Date expirationDate = userInfo.getExpiration();
+            long now = System.currentTimeMillis();
+
+            return (expirationDate.getTime() - now) < (ACCESS_TOKEN_TIME/4);
+        } catch (Exception e) {
+            return false;
+        }
     }
+
 
     // JWT 토큰 substring
     public String substringToken(String tokenValue) {
