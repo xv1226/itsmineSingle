@@ -36,17 +36,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         try {
             if ((StringUtils.hasText(accessToken))) {
-                if (jwtUtil.validateToken(accessToken)) {
-                    setAuthentication(accessToken, request);
+                if (jwtUtil.validateToken(accessToken)) {//토큰 검증
+                    setAuthentication(accessToken, request);//인증 처리
                     log.info("정상적인 엑세스 토큰");
                     if(jwtUtil.isTokenExpiringSoon(accessToken)){
-                        UpdateAccessToken(request,response,accessToken);
+                        UpdateAccessToken(request,response,accessToken);// 토큰 확인 후 재발급
                         log.info("만료 임박한 엑세스 토큰 재발급 완료");
                     }
                 }
                 else if (jwtUtil.hasRefreshToken(username)) {
-                    String refreshToken = jwtUtil.substringToken(redisTemplate.opsForValue().get(username));
-                    UpdateAccessToken(request,response,refreshToken);
+                    String refreshToken = jwtUtil.substringToken(redisTemplate.opsForValue().get(username));//redis에서 리프래시 토큰 조회 후 "Bearer " 접두어를 제외한 하위 문자열 토큰
+                    UpdateAccessToken(request,response,refreshToken);// 토큰 확인 후 재발급
                     log.info("리프래시 완료, 엑세스 토큰 재발급 완료");
                 }
                 else{
