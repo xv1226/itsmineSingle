@@ -39,6 +39,35 @@ public class KakaoService {
     @Value("${KAKAO_REST_KEY}")
     private String apiKey;
 
+    public String AuthorizationCode(){
+
+/*
+        // 요청 URL 만들기
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://kauth.kakao.com")
+                .path("/oauth/authorize")
+                .encode()
+                .build()
+                .toUri();
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", apiKey);
+        body.add("redirect_uri", "http://localhost:8080/api/user/kakao/callback");
+        body.add("response_type", "code");
+
+        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
+                .post(uri)
+                .body(body);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                requestEntity,
+                String.class
+        );
+*/
+
+        return "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+apiKey+"&redirect_uri=http://localhost:8080/api/user/kakao/callback";
+    }
+
     public String kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청

@@ -106,6 +106,11 @@ public class UserController {
         return userService.deleteById(user.getId(),password);
     }
 
+    @GetMapping("/user/kakao")
+    public String kakaoStart(){
+        return kakaoService.AuthorizationCode();
+    }
+
     @GetMapping("/user/kakao/callback")
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         // code: 카카오 서버로부터 받은 인가 코드 Service 전달 후 인증 처리 및 JWT 반환
