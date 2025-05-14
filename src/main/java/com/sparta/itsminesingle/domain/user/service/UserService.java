@@ -57,7 +57,7 @@ public class UserService {
         return ResponseEntity.ok("회원탈퇴 완료");
     }
 
-    public ResponseEntity<UserResponseDto> login(LoginRequestDto requestDto,
+/*    public ResponseEntity<UserResponseDto> login(LoginRequestDto requestDto,
             HttpServletResponse res) {
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
@@ -84,5 +84,5 @@ public class UserService {
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("등록된 사용자가 없습니다."));
-    }
+    }*/
 }

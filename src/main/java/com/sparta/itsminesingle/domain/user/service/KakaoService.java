@@ -10,6 +10,7 @@ import com.sparta.itsminesingle.domain.user.repository.UserRepository;
 import com.sparta.itsminesingle.domain.user.utils.UserRole;
 import com.sparta.itsminesingle.global.security.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -41,34 +42,10 @@ public class KakaoService {
 
     public String AuthorizationCode(){
 
-/*
-        // 요청 URL 만들기
-        URI uri = UriComponentsBuilder
-                .fromUriString("https://kauth.kakao.com")
-                .path("/oauth/authorize")
-                .encode()
-                .build()
-                .toUri();
-
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_id", apiKey);
-        body.add("redirect_uri", "http://localhost:8080/api/user/kakao/callback");
-        body.add("response_type", "code");
-
-        RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
-                .post(uri)
-                .body(body);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                requestEntity,
-                String.class
-        );
-*/
-
         return "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+apiKey+"&redirect_uri=http://localhost:8080/api/user/kakao/callback";
     }
 
-    public String kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public void kakaoLogin(String code, HttpServletResponse response) throws IOException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String tokens = getToken(code);
@@ -83,9 +60,16 @@ public class KakaoService {
         String accessToken= jwtUtil.createAccessToken(kakaoUser.getUsername(),kakaoUser.getUserRole());
         String refreshToken=jwtUtil.createRefreshToken(kakaoUser.getUsername(),kakaoUser.getUserRole());
 
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
+        // Redis에 RefreshToken 저장
         redisService.saveRefreshToken(kakaoUser.getUsername(),refreshToken);
 
-        return accessToken;
+        // JSON 형식으로 로그인 성공 메시지 작성
+        String loginSuccessMessage = String.format("{\"message\": \"로그인 완료\", \"accessToken\": \"%s\"}", accessToken);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(loginSuccessMessage);
 
     }
 
